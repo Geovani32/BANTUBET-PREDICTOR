@@ -1,0 +1,135 @@
+
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BANTU BET PREDICTOR V12</title>
+<style>
+body {
+  margin:0;
+  background:#080d18;
+  color:white;
+  font-family:Arial,sans-serif;
+  text-align:center;
+}
+.container {
+  max-width:440px;
+  margin:35px auto;
+  padding:20px;
+}
+h1 {color:#00e5a0;font-size:25px}
+.version {color:#9ba9bd}
+.panel {
+  background:#141f32;
+  padding:22px;
+  border-radius:16px;
+  margin-top:20px;
+}
+.signal {
+  font-size:35px;
+  font-weight:bold;
+  color:#00e5a0;
+  margin:20px;
+}
+button {
+  background:#00c98b;
+  color:#06130e;
+  border:0;
+  padding:15px;
+  width:100%;
+  border-radius:10px;
+  font-size:17px;
+  font-weight:bold;
+  margin-top:12px;
+}
+input {
+  width:90%;
+  padding:13px;
+  border-radius:8px;
+  border:0;
+  font-size:17px;
+  text-align:center;
+}
+#history {color:#cbd5e1;text-align:left}
+small {color:#9ba9bd}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🚀 BANTU BET PREDICTOR</h1>
+<div class="version">AVIATOR V12</div>
+
+<div class="panel">
+<h3>PRÓXIMO SINAL</h3>
+<div class="signal" id="signal">AGUARDAR</div>
+<p id="status">Sistema pronto</p>
+<button onclick="predict()">GERAR ANÁLISE</button>
+</div>
+
+<div class="panel">
+<h3>ANÁLISE DE RODADAS</h3>
+<input id="result" type="number" min="1" step="0.01"
+placeholder="Multiplicador (ex: 2.45)">
+<button onclick="addResult()">REGISTAR RESULTADO</button>
+<p id="count">Resultados registados: 0</p>
+</div>
+
+<div class="panel">
+<h3>HISTÓRICO</h3>
+<div id="history">Sem resultados.</div>
+</div>
+<p><small>Ferramenta experimental. Não garante previsões nem lucros.</small></p>
+</div>
+
+<script>
+let results = [];
+
+function addResult() {
+  const input = document.getElementById("result");
+  const value = Number(input.value);
+
+  if (!Number.isFinite(value) || value < 1) {
+    alert("Introduz um multiplicador válido.");
+    return;
+  }
+
+  results.unshift(value);
+  results = results.slice(0,50);
+  input.value = "";
+
+  document.getElementById("count").textContent =
+    "Resultados registados: " + results.length;
+
+  document.getElementById("history").innerHTML =
+    results.map(v => "🚀 " + v.toFixed(2) + "x").join("<br>");
+
+  document.getElementById("signal").textContent = "AGUARDAR";
+  document.getElementById("status").textContent =
+    "Novo resultado registado. Pronto para análise.";
+}
+
+function predict() {
+  const signal = document.getElementById("signal");
+  const status = document.getElementById("status");
+
+  if (results.length < 10) {
+    signal.textContent = "DADOS INSUFICIENTES";
+    status.textContent =
+      "Regista pelo menos 10 resultados para análise estatística.";
+    return;
+  }
+
+  const average = results.reduce((a,b)=>a+b,0)/results.length;
+  const low = results.filter(v=>v < 2).length/results.length;
+
+  signal.textContent = "SEM ENTRADA";
+  status.textContent =
+    "Média: " + average.toFixed(2) +
+    "x | Rodadas abaixo de 2x: " +
+    (low*100).toFixed(1) +
+    "%. Os dados passados não permitem prever a próxima rodada.";
+}
+</script>
+</body>
+</html>
